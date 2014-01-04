@@ -58,4 +58,4 @@ Todo
 Credit
 ------
 
-Enhanced Steam Standalone is based on the work and plugin of jshackles and Enhanced Steam contributors, and the injection/proxy is based on an idea and "implementation" of 7heo. All this repository's content has been released under GPL v2, unless noted otherwise (for other software such as nginx and rinetd).
+Enhanced Steam Standalone is based on the work and plugin of [jshackles](https://github.com/jshackles) and Enhanced Steam contributors, and the injection/proxy is based on an idea and "implementation" of [7heo](https://github.com/7heo). All this repository's content has been released under GPL v2, unless noted otherwise (for other software such as nginx and rinetd).
