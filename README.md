@@ -1,5 +1,4 @@
-**/!\ THIS VERY EARLY ALPHA SOFTWARE CAN (especially if you got an installer) BE USED TO SCAM (Do actions on your behalf, empty your inventory) YOU ON STEAM, BE VERY CAREFUL IF YOU DON'T UNDERSTAND HOW IT WORKS. YOU HAVE BEEN WARNED /!\**
-
+**/!\ DO NOT INSTALL ANY VERSION OF ENHANCED STEAM STANDALONE FROM UNKNOWN SOURCES /!\**
 
 Enhanced Steam Standalone
 =============
@@ -13,28 +12,27 @@ For now, the installation requires several steps, with a lot of manual work:
 
 1. Clone this repository.
 2. Edit your [hosts](https://en.wikipedia.org/wiki/Hosts_%28file%29#Location_in_the_file_system) file to resolve store.steampowered.com and steamcommunity.com locally (use two different IPs, like 127.0.0.200 and 127.0.0.201; as it is needed for HTTPS). You can also append the [hosts](hosts) file from this repository to yours.
-3. Start rinetd using your terminal: `rinetd -c rinetd.conf`
-4. Start nginx
-5. Start/Call the Steam client and navigate.
+3. Launch Ehanced Steam.exe
+4. Browse Steam with new features
 
-_Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd configuration too._
+_Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd\rinetd.conf file also._
 
 Principle
 ---------
 
-This project is a hackish proxy that does inject some javascript script into the store and community steam pages, so they will be enhanced. Here is how it processes, step by step:
+This project creates a local proxy that injects some javascript into the Steam store and community pages, so they will be enhanced.  Here is how it processes, step by step:
 
 1. The DNS records for the store and the community are spoofed, thanks to the hosts file.
 2. The browser then targets localhost for both domains.
-3. On the local host (a.k.a localhost), the nginx server is running, and therefore, ready to proxy the steam store and community.
+3. On the local host, the nginx proxy server is running, and therefore, ready to proxy the Steam store and community.
 4. On that same local host, rinetd is running and ready to proxy any other TCP streams that would be needed (such as HTTPS).
 5. When connected to the proxi-ed steam pages, the nginx daemon queries the DNS (a real one, not the hosts file), to get the IP addresses of the called domain. Then it forwards the request.
-6. When the page is returned, it perfoms the js injection, and serves the content to the client.
+6. When the page is returned, it perfoms the code injection, and serves the content to the client.
 
 What else you can do
 --------------------
 
-With that principle in mind, and using these software (or similar ones), you can do the following things:
+With that principle in mind, and using this software, you can do the following things:
 
 - Use Enhanced Steam with _any_ browser you want, transparently.
 - Serve Enhanced Steam for a whole network (a LAN for example)
@@ -51,9 +49,8 @@ This project uses open source code from [nginx](http://nginx.org/LICENSE), [rine
 Todo
 ----
 - The TCP proxy uses IP addresses for the redirection. It would be better to use domains instead (eg. store.steampowered.com and steamcommunity.com)
-- Check if there is a way (probably not) to get the hosts header from the HTTPS requests.
 - Improve the content of the error page, with better "is online" testing; and why not with js.
-- Write an installer
+- Better launch application
  
 Credit
 ------
