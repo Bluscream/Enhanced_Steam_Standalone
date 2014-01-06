@@ -3,6 +3,10 @@ window.addEventListener('DOMContentLoaded', function() { main(window.jQuery); },
 function main($) {	
 	var apps;
 	var appid_promises = {};
+	var signedInChecked = false;
+
+	var cookie = document.cookie;
+	var language = cookie.match(/language=([a-z]{3})/i)[1];
 
 	// Session storage functions.
 	function setValue(key, value) {
@@ -34,6 +38,10 @@ function main($) {
 	
 	function escapeHTML(str) {
 		return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+	}
+
+	function getCookie(name) {
+		return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(name).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
 	}
 
 	// DOM helpers
@@ -70,6 +78,16 @@ function main($) {
 	function get_appid_wishlist(t) {
 		if (t && t.match(/game_(\d+)/)) return RegExp.$1;
 		else return null;
+	}
+
+	// check if the user is signed in
+	function is_signed_in() {
+		if (!signedInChecked) {
+			var steamLogin = getCookie("steamLogin");
+			if (steamLogin) isSignedIn = steamLogin.replace(/%.*/, "").match(/^\d+/);
+			signedInChecked = true;
+		}
+		return isSignedIn;
 	}
 
 	// colors the tile for owned games
@@ -474,6 +492,38 @@ function main($) {
 		}
 	}
 
+	function add_affordable_button() {
+		if (is_signed_in() && $("#header_wallet_ctn").text().trim()) {
+			var balance_text = $("#header_wallet_ctn").text().trim();
+			var currency_symbol = balance_text.match(/(?:R\$|\$|€|£|pуб)/)[0];
+			var balance = balance_text.replace(currency_symbol, "");
+			if(currency_symbol == "$") balance = balance.replace(" USD", "");
+			balance = balance.replace(",", ".");
+			if (balance > 0) {
+				var link = "http://store.steampowered.com/search/?sort_by=Price&sort_order=DESC&price=0%2C" + balance;
+				$(".btn_browse").each(function(index) {
+					if (index == 1) {
+						switch (currency_symbol) {
+							case "€":
+								$(this).after("<a class='btn_browse' style='width: 308px; background-image: url( http://store.steampowered.com/es-images/es_btn_browse.png );' href='" + link + "'><h3 style='width: 120px;'>" + balance + "<span class='currency'>" + currency_symbol + "</span></h3><h5><span id='es_results'></span> games under " + balance_text + "</h5></a>");
+								break;
+							case "pуб":
+								$(this).after("<a class='btn_browse' style='width: 308px; background-image: url( http://store.steampowered.com/es-images/es_btn_browse.png );' href='" + link + "'><h3 style='width: 120px;'>" + balance + "</h3><h5><span id='es_results'></span> games under " + balance_text + "</h5></a>");
+								break;
+							default:
+								$(this).after("<a class='btn_browse' style='width: 308px; background-image: url( http://store.steampowered.com/es-images/es_btn_browse.png );' href='" + link + "'><h3 style='width: 120px;'><span class='currency'>" + currency_symbol + "</span>" + balance + "</h3><h5><span id='es_results'></span> games under " + balance_text + "</h5></a>");
+						}
+						get_http(link, function(txt) {
+							var results = txt.match(/search_pagination_left(.+)\r\n(.+)/)[2];
+							results = results.match(/(\d+)(?!.*\d)/)[0];
+							$("#es_results").text(results);
+						});
+					}
+				});
+			}
+		}
+	}
+
 	function add_dlc_checkboxes() {
 		if ($("#game_area_dlc_expanded").length > 0) {
 			$("#game_area_dlc_expanded").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; margin-bottom: 10px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>Add Selected DLC To Cart</a></div></div>");
@@ -801,6 +851,7 @@ function main($) {
 
 					case /^\/$/.test(window.location.pathname):
 						add_carousel_descriptions();
+						add_affordable_button();
 						break;
 				}
 
