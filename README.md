@@ -15,7 +15,7 @@ For now, the installation requires several steps, with a lot of manual work:
 3. Launch Ehanced Steam.exe
 4. Browse Steam with new features
 
-_Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd\bin\rinetd.conf file also._
+_Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd\rinetd.conf file also._
 
 Principle
 ---------
