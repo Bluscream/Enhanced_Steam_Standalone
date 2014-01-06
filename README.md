@@ -15,7 +15,7 @@ For now, the installation requires several steps, with a lot of manual work:
 3. Launch Ehanced Steam.exe
 4. Browse Steam with new features
 
-_Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd\rinetd.conf file also._
+_Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd\bin\rinetd.conf file also._
 
 Principle
 ---------
@@ -55,4 +55,4 @@ Todo
 Credit
 ------
 
-Enhanced Steam Standalone is based on the work and plugin of [jshackles](https://github.com/jshackles) and Enhanced Steam contributors, and the injection/proxy is based on an idea and "implementation" of [7heo](https://github.com/7heo). All this repository's content has been released under GPL v2, unless noted otherwise (for other software such as nginx and rinetd).
+Enhanced Steam Standalone is based on an idea (proxy/injection) and "implementation" of [7heo](https://github.com/7heo), and uses the Enhanced Steam javascript plugin from [jshackles](https://github.com/jshackles) and Enhanced Steam contributors. All this repository's content has been released under GPL v2, unless noted otherwise (for other software such as nginx and rinetd).
