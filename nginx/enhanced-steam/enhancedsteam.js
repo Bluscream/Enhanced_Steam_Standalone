@@ -474,6 +474,33 @@ function main($) {
 		}
 	}
 
+	function add_dlc_checkboxes() {
+		if ($("#game_area_dlc_expanded").length > 0) {
+			$("#game_area_dlc_expanded").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; margin-bottom: 10px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>Add Selected DLC To Cart</a></div></div>");
+			$(".game_area_dlc_section").after("<div style='clear: both;'></div>");
+		} else {
+			$(".gameDlcBlocks").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>Add Selected DLC To Cart</a></div></div>");
+		}
+		$("#es_selected_btn").before("<form name=\"add_selected_dlc_to_cart\" action=\"http://store.steampowered.com/cart/\" method=\"POST\" id=\"es_selected_cart\">");
+		$(".game_area_dlc_row").each(function() {
+			$(this).find(".game_area_dlc_name").prepend("<input type='checkbox' class='es_dlc_selection' style='cursor: default;' id='es_select_dlc_" + $(this).find("input").val() + "' value='" + $(this).find("input").val() + "'><label for='es_select_dlc_" + $(this).find("input").val() + "' style='background-image: url( http://store.steampowered.com/es-images/check_sheet.png );'></label>");
+		});
+		function add_dlc_to_list() {
+			$("#es_selected_cart").html("<input type=\"hidden\" name=\"action\" value=\"add_to_cart\">");
+			$(".es_dlc_selection:checked").each(function() {
+				var input = $("<input>", {type: "hidden", name: "subid[]", value: $(this).val() });
+				$("#es_selected_cart").append(input);
+			});
+			if ($(".es_dlc_selection:checked").length > 0) {
+				$("#es_selected_btn").show();
+			} else {
+				$("#es_selected_btn").hide();
+			}
+		}
+		$(document).on( "change", ".es_dlc_selection", add_dlc_to_list );
+	}
+
+
 	function check_early_access(node, image_name, image_left, selector_modifier) {	
 		var href = ($(node).find("a").attr("href") || $(node).attr("href"));
 		var appid = get_appid(href);
@@ -744,11 +771,9 @@ function main($) {
 	}
 
 	$(document).ready(function(){
-
 		add_overlay();
-
 		switch (window.location.host) {
-			case "store.steampowered.com":			
+			case "store.steampowered.com":
 				switch (true) {
 					case /^\/cart\/.*/.test(window.location.pathname):
 						add_empty_cart_button();
@@ -760,6 +785,7 @@ function main($) {
 						dlc_data_from_site(appid);
 						drm_warnings();
 						add_steamdb_links(appid, "app");
+						add_dlc_checkboxes();
 						break;
 
 					case /^\/sub\/.*/.test(window.location.pathname):
@@ -811,5 +837,6 @@ function main($) {
 				}
 				break;		
 		}
+		
 	});  
 }
