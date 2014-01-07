@@ -2,20 +2,22 @@
 goto check_Permissions
 
 :check_Permissions
-    echo Administrative permissions required. Detecting permissions...
-
     net session >nul 2>&1
     if %errorLevel% == 0 (
-        echo Success: Administrative permissions confirmed.
+        rem We are administrator.
     ) else (
-        echo Failure: Current permissions inadequate.
+        echo Failure: Current permissions inadequate. Please run as administrator.
 	pause >nul
 	exit
     )
 
-copy %SystemRoot%\system32\drivers\etc\hosts %SystemRoot%\system32\drivers\etc\hosts.bak
-echo 127.0.0.200 store.steampowered.com >> %SystemRoot%\system32\drivers\etc\hosts
-echo 127.0.0.201 steamcommunity.com >> %SystemRoot%\system32\drivers\etc\hosts
+if exist %SystemRoot%\system32\drivers\etc\hosts.bak (
+	echo Your host files seems to be already modified. Aborting.
+) else (
+	copy %SystemRoot%\system32\drivers\etc\hosts %SystemRoot%\system32\drivers\etc\hosts.bak >nul
+	echo 127.0.0.200 store.steampowered.com >> %SystemRoot%\system32\drivers\etc\hosts
+	echo 127.0.0.201 steamcommunity.com >> %SystemRoot%\system32\drivers\etc\hosts
+	echo Done.
+)
 
-echo Done.
 pause >nul
