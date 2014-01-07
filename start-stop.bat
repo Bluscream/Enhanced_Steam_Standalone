@@ -24,7 +24,7 @@ if exist %SystemRoot%\system32\drivers\etc\hosts.bak (
 	taskkill /F /IM nginx.exe > nul
 	taskkill /F /IM rinetd.exe > nul
 	msg * /server:127.0.0.1 "Disabled."
-	rem mshta "javascript:alert("Disabled.");close();"
+	rem mshta "javascript:alert("Enhanced Steam disabled.");close();"
 	rem use that mshta if msg isn't working.
 ) else (
 	copy %SystemRoot%\system32\drivers\etc\hosts %SystemRoot%\system32\drivers\etc\hosts.bak >nul
@@ -32,6 +32,6 @@ if exist %SystemRoot%\system32\drivers\etc\hosts.bak (
 	echo 127.0.0.201 steamcommunity.com >> %SystemRoot%\system32\drivers\etc\hosts
 	start %~dp0\bin\nginx.exe -p %~dp0
 	start /min %~dp0\bin\rinetd.exe -c %~dp0\conf\rinetd.conf
-	msg * /server:127.0.0.1 "Enabled."
+	msg * /server:127.0.0.1 "Enhanced Steam enabled."
 	msg * /server:127.0.0.1 "WARNING: A CMD WINDOW HAS BEEN OPENED MINIMIZED. ENHANCED STEAM STANDALONE WON'T WORK IF YOU CLOSE IT."
 )
