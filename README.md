@@ -11,7 +11,7 @@ Installation
 For now, the installation requires several steps, with a lot of manual work:
 
 1. Clone this repository.
-2. Start "start-stop.bat" as Administrator (you can create a shortcut to it with "Run as Administrator" in "Advanced").
+2. Start "start-stop.bat" as Administrator ([it can be automatic](http://stackoverflow.com/questions/6811372/how-to-code-a-bat-file-to-always-run-as-admin-mode#answer-13811519); and you can also set the correct ES icon).
 4. Browse Steam with new features.
 
 OR
