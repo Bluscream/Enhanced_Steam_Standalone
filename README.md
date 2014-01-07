@@ -11,7 +11,7 @@ Installation
 For now, the installation requires several steps, with a lot of manual work:
 
 1. Clone this repository.
-2. Start "start-stop.bat" as Administrator.
+2. Start "start-stop.bat" as Administrator (you can create a shortcut to it with "Run as Administrator" in "Advanced").
 4. Browse Steam with new features.
 
 OR
