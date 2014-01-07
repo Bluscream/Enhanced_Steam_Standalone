@@ -11,9 +11,15 @@ Installation
 For now, the installation requires several steps, with a lot of manual work:
 
 1. Clone this repository.
+2. Start "start-stop.bat" as Administrator.
+4. Browse Steam with new features.
+
+OR
+
+1. Clone this repository.
 2. Edit your [hosts](https://en.wikipedia.org/wiki/Hosts_%28file%29#Location_in_the_file_system) file to resolve store.steampowered.com and steamcommunity.com locally (use two different IPs, like 127.0.0.200 and 127.0.0.201; as it is needed for HTTPS). You can also append the [hosts](hosts) file from this repository to yours.
-3. Launch Ehanced Steam.exe
-4. Browse Steam with new features
+3. Launch Enhanced Steam.exe
+4. Browse Steam with new features.
 
 _Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd\rinetd.conf file also._
 
