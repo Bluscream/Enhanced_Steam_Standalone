@@ -39,7 +39,6 @@ Partial Class frmMain
         Me.btnNginxStop = New System.Windows.Forms.Button()
         Me.chkStatus = New System.Windows.Forms.CheckBox()
         Me.tmrFirst = New System.Windows.Forms.Timer(Me.components)
-        Me.tmrPort80Status = New System.Windows.Forms.Timer(Me.components)
         Me.grpStatus.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -168,11 +167,7 @@ Partial Class frmMain
         'tmrFirst
         '
         Me.tmrFirst.Enabled = True
-        Me.tmrFirst.Interval = 200
-        '
-        'tmrPort80Status
-        '
-        Me.tmrPort80Status.Interval = 3000
+        Me.tmrFirst.Interval = 400
         '
         'frmMain
         '
@@ -208,6 +203,5 @@ Partial Class frmMain
     Friend WithEvents chkStatus As System.Windows.Forms.CheckBox
     Friend WithEvents btnCheckHosts As System.Windows.Forms.Button
     Friend WithEvents tmrFirst As System.Windows.Forms.Timer
-    Friend WithEvents tmrPort80Status As System.Windows.Forms.Timer
 
 End Class

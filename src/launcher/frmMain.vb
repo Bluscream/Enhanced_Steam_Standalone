@@ -1,5 +1,6 @@
 ﻿Imports System.IO
 Imports System.Net
+Imports System.Text.RegularExpressions
 
 Public Class frmMain
     Public Sub New()
@@ -30,15 +31,20 @@ Public Class frmMain
         'this creates the streamwriter "writer" and sets its path to our string hosts, done above.
         Try
             Dim sr As StreamReader = New StreamReader(hosts)
-            Do While sr.Peek() >= 0
-                Dim line = sr.ReadLine
-                If sr.ReadLine = "127.0.0.200 store.steampowered.com" Then
+            Dim line As String = ""
+            Dim rgxStore As New Regex("^127.0.0.200([ \t])*store.steampowered.com")
+            Dim rgxCommunity As New Regex("^127.0.0.201([ \t])*steamcommunity.com")
+
+            Do
+                If rgxStore.IsMatch(line) Then
                     line1 = True
                 End If
-                If sr.ReadLine = "127.0.0.201 steamcommunity.com" Then
+                If rgxCommunity.IsMatch(line) Then
                     line2 = True
                 End If
-            Loop
+                line = sr.ReadLine
+            Loop Until line Is Nothing
+
             sr.Close()
 
         Catch ex As Exception
@@ -51,6 +57,15 @@ Public Class frmMain
             lblHost.Text = "Host File: Entries Not Present"
         End If
     End Function
+
+    Sub showMatch(ByVal text As String, ByVal expr As String)
+        Console.WriteLine("The Expression: " + expr)
+        Dim mc As MatchCollection = Regex.Matches(text, expr)
+        Dim m As Match
+        For Each m In mc
+            Console.WriteLine(m)
+        Next m
+    End Sub
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Height = 111
@@ -82,7 +97,7 @@ Public Class frmMain
             Dim exeDir As String = Path.GetDirectoryName(exeFile)
 
             Dim pNginx As New ProcessStartInfo()
-            pNginx.WorkingDirectory = exeDir & "\nginx\"
+            pNginx.WorkingDirectory = exeDir
             pNginx.FileName = "nginx.exe"
             pNginx.WindowStyle = ProcessWindowStyle.Hidden
             Process.Start(pNginx)
@@ -98,9 +113,9 @@ Public Class frmMain
 
             Dim pRinetd As New ProcessStartInfo()
             pRinetd.UseShellExecute = True
-            pRinetd.WorkingDirectory = exeDir & "\rinetd\"
+            pRinetd.WorkingDirectory = exeDir
             pRinetd.FileName = "rinetd.exe"
-            pRinetd.Arguments = "-c rinetd.conf"
+            pRinetd.Arguments = "-c conf\rinetd.conf"
             pRinetd.WindowStyle = ProcessWindowStyle.Hidden
             Process.Start(pRinetd)
         Catch ex As Exception
@@ -186,30 +201,6 @@ Public Class frmMain
         If lblStatus.Text = "Not Enhanced" Then
             chkStatus.Checked = True
         End If
-        'tmrPort80Status.Enabled = True
         tmrFirst.Enabled = False
-    End Sub
-
-    Private Sub tmrPort80Status_Tick(sender As Object, e As EventArgs) Handles tmrPort80Status.Tick
-        Dim hostname As String = "localhost"
-        Dim portno As Integer = 80
-
-        Try
-            Dim sock As New System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp)
-            sock.Connect(hostname, portno)
-            If sock.Connected = False Then
-                ' Port is in use and connection is successful
-                Console.WriteLine("Port is Closed")
-            End If
-
-            sock.Close()
-        Catch ex As System.Net.Sockets.SocketException
-            If ex.ErrorCode = 10061 Then
-                ' Port is unused and could not establish connection 
-                Console.WriteLine("Port is Open!")
-            Else
-                Console.WriteLine(ex.Message)
-            End If
-        End Try
     End Sub
 End Class
