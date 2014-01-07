@@ -13,7 +13,7 @@ goto check_Permissions
 	exit
     )
 
-echo #file wiped out > %SystemRoot%\system32\drivers\etc\hosts
+move %SystemRoot%\system32\drivers\etc\hosts.bak %SystemRoot%\system32\drivers\etc\hosts
 
 echo Done.
 pause >nul

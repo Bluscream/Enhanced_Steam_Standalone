@@ -13,6 +13,7 @@ goto check_Permissions
 	exit
     )
 
+copy %SystemRoot%\system32\drivers\etc\hosts %SystemRoot%\system32\drivers\etc\hosts.bak
 echo 127.0.0.200 store.steampowered.com >> %SystemRoot%\system32\drivers\etc\hosts
 echo 127.0.0.201 steamcommunity.com >> %SystemRoot%\system32\drivers\etc\hosts
 
