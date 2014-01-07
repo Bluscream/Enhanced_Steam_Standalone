@@ -30,7 +30,7 @@ if exist %SystemRoot%\system32\drivers\etc\hosts.bak (
 	echo 127.0.0.201 steamcommunity.com >> %SystemRoot%\system32\drivers\etc\hosts
 	start %~dp0\bin\nginx.exe -p %~dp0
 	start /min %~dp0\bin\rinetd.exe -c %~dp0\conf\rinetd.conf
-	echo WARNING: A CMD WINDOWS HAS BEEN OPENED MINIMIZED.
+	echo WARNING: A CMD WINDOW HAS BEEN OPENED MINIMIZED.
 	echo          DO NOT CLOSE IT OR ENHANCED STEAM WON'T WORK.
 	echo Enabled.
 )
