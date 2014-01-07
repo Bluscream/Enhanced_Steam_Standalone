@@ -23,7 +23,7 @@ if exist %SystemRoot%\system32\drivers\etc\hosts.bak (
 	move %SystemRoot%\system32\drivers\etc\hosts.bak %SystemRoot%\system32\drivers\etc\hosts > nul
 	taskkill /F /IM nginx.exe > nul
 	taskkill /F /IM rinetd.exe > nul
-	msg * /server:127.0.0.1 "Enabled."
+	msg * /server:127.0.0.1 "Disabled."
 	rem mshta "javascript:alert("Disabled.");close();"
 	rem use that mshta if msg isn't working.
 ) else (
