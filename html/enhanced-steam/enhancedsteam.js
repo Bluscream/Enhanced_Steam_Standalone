@@ -310,6 +310,21 @@ function main($) {
 		}
 	}
 
+	function add_fake_country_code_warning() {
+		var LKGBillingCountry = getCookie("LKGBillingCountry");
+		var fakeCC = getCookie("fakeCC");
+
+		if (fakeCC && LKGBillingCountry && LKGBillingCountry.length == 2 && LKGBillingCountry != fakeCC) {
+			$("#global_header").after('<div class=content style="background-image: url( http://store.steampowered.com/es-images/red_banner.png ); height: 21px; text-align: center; padding-top: 8px;">You are using the Steam store for the ' + fakeCC + ' region. <a href="#" id="reset_fake_country_code">Click here to go back to the ' + LKGBillingCountry + ' store.</a></div>');
+			$("#page_background_holder").css("top", "135px");
+			$("#reset_fake_country_code").click(function(e) {
+				e.preventDefault();
+				document.cookie = 'fakeCC=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;';
+				window.location.replace(window.location.href.replace(/[?&]cc=.{2}/, ""));
+			})
+		}
+	}
+
 	function show_pricing_history(appid, type) {
 		storestring = "steam,amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,beamdog,adventureshop,nuuvem,shinyloot,dlgamer,humblestore";
 
@@ -821,6 +836,9 @@ function main($) {
 	}
 
 	$(document).ready(function(){
+		is_signed_in();
+
+		add_fake_country_code_warning();
 		add_overlay();
 		switch (window.location.host) {
 			case "store.steampowered.com":
