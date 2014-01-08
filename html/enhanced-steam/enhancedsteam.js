@@ -568,6 +568,95 @@ function main($) {
 		});
 	}
 
+	function inventory_market_prepare() {		
+		if ($(".itemHolder").length == 1) {
+			window.setTimeout(inventory_market_prepare, 1000);
+			return;
+		}
+		$("#es_market_helper").remove();
+		var es_market_helper = document.createElement("script");
+		es_market_helper.type = "text/javascript";
+		es_market_helper.id = "es_market_helper";
+		es_market_helper.textContent = 'jQuery(".itemHolder, .newitem").bind("click", function() { window.postMessage({ type: "es_sendmessage", text: iActiveSelectView+":::"+g_ActiveInventory.selectedItem.marketable+":::"+g_ActiveInventory.appid+":::"+g_ActiveInventory.selectedItem.market_hash_name }, "*"); });';
+		document.documentElement.appendChild(es_market_helper);
+
+		window.addEventListener("message", function(event) {
+			if (event.source != window)
+				return;
+
+			if (event.data.type && (event.data.type == "es_sendmessage")) { inventory_market_helper(event.data.text); }
+		}, false);
+	}
+
+	function inventory_market_helper(response) {
+		var desc, appid, item_name, game_name;
+		var item = response.split(":::")[0];
+		var marketable = response.split(":::")[1];
+		var global_id = response.split(":::")[2];
+		var hash_name = response.split(":::")[3];
+
+		function rewrite_string(string) {
+			string = string.replace(/#/, "%23");
+			string = string.replace(/ /g, "%20");
+			string = string.replace(/\(/g, "%28");
+			string = string.replace(/\)/g, "%29");
+			string = string.replace(/:/g, "%3A");
+			string = string.replace(/'/g, "%27");
+			string = string.replace(/&/g,"&amp;");
+			string = string.replace(/!/g, "%21");
+			string = string.replace(/\?/g, "%3F");
+			string = string.replace(/,/g, "%2C");
+			string = string.replace(/\"/g, "%22");
+			string = string.replace(/"/g, "&quot;");
+			string = string.replace(/>/g, "&gt;");
+			string = string.replace(/</g, "&lt;");
+			return string;
+		}
+
+		if ($('#es_item0').length == 0) { $("#iteminfo0_item_market_actions").after("<div class='item_market_actions es_item_action' id=es_item0 height=10></div>"); }
+		if ($('#es_item1').length == 0) { $("#iteminfo1_item_market_actions").after("<div class='item_market_actions es_item_action' id=es_item1 height=10></div>"); }
+		$('.es_item_action').html("");			
+		
+		if (marketable == 0) { $('.es_item_action').remove(); return; }
+
+		function load_inventory_market_prices(item, item_name, global_id) {
+			switch (global_id) {
+				case "730":
+					var url = "http://steamcommunity.com/market/listings/" + global_id + "/" + rewrite_string(item_name);
+					break;
+				default:
+					var url = "http://steamcommunity.com/market/listings/" + global_id + "/" + rewrite_string(hash_name);
+			}
+			get_http(url, function (txt) {
+				var item_price = txt.match(/<span class="market_listing_price market_listing_price_with_fee">\r\n(.+)<\/span>/g);
+				var item_to_get;
+				if (item_price) { 
+					$(item_price).each(function(index, value) {
+						if (!(value.match(/\!/))) { 
+							item_to_get = value.match(/<span class="market_listing_price market_listing_price_with_fee">\r\n(.+)<\/span>/); 
+							return false;
+						}
+					});
+					
+					$("#es_item" + item).html("Lowest price for " + item_name + ": " + item_to_get[1].trim() + "<br><a href=\"" + url + "\" target='_blank' class='btn_grey_grey btn_medium'><span>View Marketplace</span></a>");
+				} else { 
+					$("#es_item" + item).html("No Results Found"); 
+				}
+			});
+		}
+		
+		$("#es_item" + item).html("<img src='http://cdn.steamcommunity.com/public/images/login/throbber.gif'>Loading");
+		item_name = $("#iteminfo" + item + "_item_name").html();
+		switch (global_id) {
+			case "730":
+				var condition = $("#iteminfo" + item + "_item_descriptors .descriptor:contains('Exterior')").text().replace(/Exterior\: /, "");
+				if (condition) item_name += " (" + condition + ")";
+			default:
+				load_inventory_market_prices(item, item_name, global_id);
+				break;
+		}
+	}
+
 	function add_dlc_checkboxes() {
 		if ($("#game_area_dlc_expanded").length > 0) {
 			$("#game_area_dlc_expanded").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; margin-bottom: 10px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>Add Selected DLC To Cart</a></div></div>");
@@ -681,6 +770,10 @@ function main($) {
 				for (var i = 0; i < mutation.addedNodes.length; i++) {
 					var node = mutation.addedNodes[i];
 					// Check the node is what we want, and not some unrelated DOM change.
+					if (node.classList && node.classList.contains("inventory_page")) {
+						inventory_market_prepare();
+					}
+
 					if (node.classList && node.classList.contains("tab_row")) {					
 						start_highlighting_node(node);
 						check_early_access(node, "ea_sm_120.png", 0);
@@ -927,6 +1020,11 @@ function main($) {
 					case /^\/(?:id|profiles)\/.+\/\b(home|myactivity|status)\b/.test(window.location.pathname):
 						start_friend_activity_highlights();
 						bind_ajax_content_highlighting();
+						break;
+
+					case /^\/(?:id|profiles)\/.+\/inventory/.test(window.location.pathname):
+						bind_ajax_content_highlighting();
+						inventory_market_prepare();
 						break;
 
 					case /^\/(?:id|profiles)\/.+/.test(window.location.pathname):
