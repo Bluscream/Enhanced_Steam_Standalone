@@ -310,6 +310,11 @@ function main($) {
 		}
 	}
 
+	function send_age_verification() {
+		document.getElementsByName("ageYear")[0].value="1955";
+		document.getElementsByClassName("btn_checkout_green")[0].click();
+	}
+
 	function add_fake_country_code_warning() {
 		var LKGBillingCountry = getCookie("LKGBillingCountry");
 		var fakeCC = getCookie("fakeCC");
@@ -861,6 +866,10 @@ function main($) {
 						drm_warnings();
 						show_pricing_history(subid, "sub");
 						add_steamdb_links(subid, "sub");
+						break;
+
+					case /^\/agecheck\/.*/.test(window.location.pathname):
+						send_age_verification();
 						break;
 
 					case /^\/steamaccount\/addfunds/.test(window.location.pathname):
