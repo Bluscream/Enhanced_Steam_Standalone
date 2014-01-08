@@ -61,6 +61,7 @@ function main($) {
 				callback(this.responseText);
 			}
 		};
+		if (url.match(/store.steampowered.com/)) { http.withCredentials = true; }
 		http.open('GET', url, true);
 		http.send(null);
 	}
@@ -110,6 +111,12 @@ function main($) {
 		// Genre Carousel items
 		if (node.classList.contains("large_cap")) {
 			$node = $(node).find(".large_cap_content");
+		}
+
+		// Blotter activity
+		if ($node.parent().parent()[0].classList.contains("blotter_daily_rollup_line") || $node.parent().parent()[0].classList.contains("blotter_author_block") || $node.parent().parent()[0].classList.contains("blotter_gamepurchase") || $node.parent().parent()[0].classList.contains("blotter_recommendation")) {
+			$node.css("color", color);
+			return;
 		}
 		
 		$node.css("backgroundImage", "none");
@@ -544,6 +551,23 @@ function main($) {
 		}
 	}
 
+	function start_friend_activity_highlights() {
+		var selectors = [
+			".blotter_author_block a",
+			".blotter_gamepurchase_details a",
+			".blotter_daily_rollup_line a"
+		];
+
+		$.each(selectors, function (i, selector) {
+			$.each($(selector), function(j, node){
+				var appid = get_appid(node.href);
+				if (appid && !node.classList.contains("blotter_userstats_game")) {
+					get_app_details(appid, node);
+				}
+			});
+		});
+	}
+
 	function add_dlc_checkboxes() {
 		if ($("#game_area_dlc_expanded").length > 0) {
 			$("#game_area_dlc_expanded").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; margin-bottom: 10px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>Add Selected DLC To Cart</a></div></div>");
@@ -841,10 +865,12 @@ function main($) {
 	}
 
 	$(document).ready(function(){
+		if (window.location.pathname.startsWith("/api")) return;
 		is_signed_in();
 
 		add_fake_country_code_warning();
 		add_overlay();
+
 		switch (window.location.host) {
 			case "store.steampowered.com":
 				switch (true) {
@@ -897,7 +923,12 @@ function main($) {
 						start_highlights_and_tags();
 						break;
 
-					case /^\/(?:id|profiles)\/[^\/]+\/?$/.test(window.location.pathname):
+					case /^\/(?:id|profiles)\/.+\/\b(home|myactivity|status)\b/.test(window.location.pathname):
+						start_friend_activity_highlights();
+						bind_ajax_content_highlighting();
+						break;
+
+					case /^\/(?:id|profiles)\/.+/.test(window.location.pathname):
 						add_community_profile_links();
 						change_user_background();
 						break;
