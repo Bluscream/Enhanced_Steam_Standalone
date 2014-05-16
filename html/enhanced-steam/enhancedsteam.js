@@ -469,6 +469,57 @@ function main($) {
 		document.getElementsByClassName("btn_checkout_green")[0].click();
 	}
 
+	// Add a link to options to the global menu (where is Install Steam button)
+	function add_enhanced_steam_options() {
+		$dropdown = $("<span class=\"pulldown global_action_link\" id=\"enhanced_pulldown\">Enhanced Steam</span>");
+		$dropdown_options_container = $("<div class=\"popup_block\"><div class=\"popup_body popup_menu\" id=\"es_popup\"></div></div>");
+		$dropdown_options = $dropdown_options_container.find(".popup_body");
+		$dropdown_options.css("display", "none");
+
+		// remove menu if click anywhere but on "Enhanced Steam". Commented out bit is for clicking on menu won't make it disappear either.
+		$('body').bind('click', function(e) {
+			if(/*$(e.target).closest(".popup_body").length == 0 && */$(e.target).closest("#enhanced_pulldown").length == 0) {
+				if ($dropdown_options.css("display") == "block" || $dropdown_options.css("display") == "") {
+					$dropdown_options.css("display", "none");
+				}
+			}
+		});
+
+		$dropdown.click(function(){
+			$dropdown_options.toggle();
+		});
+
+		$website_link = $("<a class=\"popup_menu_item\" target=\"_blank\" href=\"http://www.enhancedsteam.com\">" + localized_strings[language].website + "</a>");
+		$contribute_link = $("<a class=\"popup_menu_item\" target=\"_blank\" href=\"//github.com/jshackles/Enhanced_Steam\">" + localized_strings[language].contribute + "</a>");
+		$translate_link = $("<a class=\"popup_menu_item\" target=\"_blank\" href=\"//translation.enhancedsteam.com\">" + localized_strings[language].translate + "</a>");
+		$bug_feature_link = $("<a class=\"popup_menu_item\" target=\"_blank\" href=\"//github.com/jshackles/Enhanced_Steam/issues\">" + localized_strings[language].bug_feature + "</a>");
+		$donation_link = $("<a class=\"popup_menu_item\" target=\"_blank\" href=\"//enhancedsteam.com/donate.php\">" + localized_strings[language].donate + "</a>");
+		$group_link = $("<a class=\"popup_menu_item\" target=\"_blank\" href=\"//" + localized_strings[language].official_group_url + "\">" + localized_strings[language].official_group + "</a>");
+
+		$clear_cache_link = $("<a class=\"popup_menu_item\" href=\"\">" + localized_strings[language].clear_cache + "</a>");
+		$clear_cache_link.click(function(){
+			localStorage.clear();
+			sessionStorage.clear();
+			location.reload();
+		});
+
+		$spacer = $("<div class=\"hr\"></div>");
+
+		$dropdown_options.append($clear_cache_link);
+		$dropdown_options.append($spacer.clone());
+		$dropdown_options.append($contribute_link);
+		$dropdown_options.append($translate_link);
+		$dropdown_options.append($bug_feature_link);
+		$dropdown_options.append($spacer.clone());
+		$dropdown_options.append($website_link);
+		$dropdown_options.append($group_link);
+		$dropdown_options.append($donation_link);
+
+		$("#global_action_menu")
+			.before($dropdown)
+			.before($dropdown_options_container);
+	}
+
 	function add_fake_country_code_warning() {
 		var LKGBillingCountry = getCookie("LKGBillingCountry");
 		var fakeCC = getCookie("fakeCC");
@@ -1544,6 +1595,8 @@ function main($) {
 		localization_promise.done(function(){
 
 			if (window.location.pathname.startsWith("/api")) return;
+
+			add_enhanced_steam_options();
 			add_fake_country_code_warning();
 			add_overlay();
 
