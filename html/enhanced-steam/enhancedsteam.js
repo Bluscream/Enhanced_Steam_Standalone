@@ -129,15 +129,6 @@ function main($) {
 	}
 
 	// DOM helpers
-	function xpath_each(xpath, callback) {
-		var res = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-		var node;
-		for (var i = 0; i < res.snapshotLength; ++i) {
-			node = res.snapshotItem(i);
-			callback(node);
-		}
-	}
-
 	function get_http(url, callback) {
 		var http = new window.XMLHttpRequest();
 		http.onreadystatechange = function () {
@@ -341,8 +332,9 @@ function main($) {
 	}
 
 	function appdata_on_wishlist() {
-		xpath_each("//a[contains(@class,'btn_visit_store')]", function (node) {
-			var app = get_appid(node.href);
+		$(".btn_visit_store").each(function() {
+			var node = this;
+			var app = get_appid(this.href);
 			get_http('//store.steampowered.com/api/appdetails/?appids=' + app, function (data) {
 				var storefront_data = JSON.parse(data);
 				$.each(storefront_data, function(appid, app_data) {
@@ -354,7 +346,7 @@ function main($) {
 							htmlstring += '<input type="hidden" name="action" value="add_to_cart">';
 							htmlstring += '<input type="hidden" name="subid" value="' + app_data.data.packages[0] + '">';
 							htmlstring += '</form>';
-							$(node).before('</form>' + htmlstring + '<a href="#" onclick="document.forms[\'add_to_cart_' + app_data.data.packages[0] + '\'].submit();" class="btn_visit_store">Add to Cart</a>  ');
+							$(node).before('</form>' + htmlstring + '<a href="#" onclick="document.forms[\'add_to_cart_' + app_data.data.packages[0] + '\'].submit();" class="btn_visit_store">' + localized_strings[language].add_to_cart + '</a>  ');
 						}
 
 						// Adds platform information
