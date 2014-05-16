@@ -185,11 +185,13 @@ function main($) {
 
 	// colors the tile for owned games
 	function highlight_owned(node) {
+		node.classList.add("es_highlight_owned");
 		highlight_node(node, "#5c7836");  
 	}
 
 	// colors the tile for wishlist games
 	function highlight_wishlist(node) {
+		node.classList.add("es_highlight_wishlist");
 		highlight_node(node, "#496e93");
 	}
 
@@ -1627,12 +1629,13 @@ function main($) {
 		}
 	}
 
+	// Add checkboxes for DLC
 	function add_dlc_checkboxes() {
 		if ($("#game_area_dlc_expanded").length > 0) {
-			$("#game_area_dlc_expanded").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; margin-bottom: 10px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>Add Selected DLC To Cart</a></div></div>");
+			$("#game_area_dlc_expanded").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; margin-bottom: 10px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>" + localized_strings[language].add_selected_dlc_to_cart + "</a></div></div>");
 			$(".game_area_dlc_section").after("<div style='clear: both;'></div>");
 		} else {
-			$(".gameDlcBlocks").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>Add Selected DLC To Cart</a></div></div>");
+			$(".gameDlcBlocks").after("<div class='game_purchase_action game_purchase_action_bg' style='float: left; margin-top: 4px; display: none;' id='es_selected_btn'><div class='btn_addtocart'><div class='btn_addtocart_left'></div><div class='btn_addtocart_right'></div><a class='btn_addtocart_content' href='javascript:document.forms[\"add_selected_dlc_to_cart\"].submit();'>" + localized_strings[language].add_selected_dlc_to_cart + "</a></div></div>");
 		}
 		$("#es_selected_btn").before("<form name=\"add_selected_dlc_to_cart\" action=\"http://store.steampowered.com/cart/\" method=\"POST\" id=\"es_selected_cart\">");
 		$(".game_area_dlc_row").each(function() {
@@ -1650,6 +1653,45 @@ function main($) {
 				$("#es_selected_btn").hide();
 			}
 		}
+
+		$(".game_area_dlc_section").find(".gradientbg").after("<div style='height: 28px; padding-left: 15px; display: none;' id='es_dlc_option_panel'></div>");
+
+		$("#es_dlc_option_panel").append("<div class='es_dlc_option' id='unowned_dlc_check'>" + localized_strings[language].select.unowned_dlc + "</div>");
+		$("#unowned_dlc_check").on("click", function() {		
+			$(".game_area_dlc_section").find(".game_area_dlc_row").each(function() {
+				if (!($(this).hasClass("es_highlight_owned"))) {
+					$(this).find("input").prop("checked", true).change();				
+				}
+			});
+		});
+
+		$("#es_dlc_option_panel").append("<div class='es_dlc_option' id='wl_dlc_check'>" + localized_strings[language].select.wishlisted_dlc + "</div>");
+		$("#wl_dlc_check").on("click", function() {		
+			$(".game_area_dlc_section").find(".game_area_dlc_row").each(function() {
+				if ($(this).hasClass("es_highlight_wishlist")) {
+					$(this).find("input").prop("checked", true).change();
+				}	
+			});
+		});
+
+		$("#es_dlc_option_panel").append("<div class='es_dlc_option' id='no_dlc_check'>" + localized_strings[language].select.none + "</div>");
+		$("#no_dlc_check").on("click", function() {		
+			$(".game_area_dlc_section").find(".game_area_dlc_row").each(function() {
+				$(this).find("input").prop("checked", false).change();
+			});
+		});
+
+		$(".game_area_dlc_section").find(".gradientbg").append("<div id='es_dlc_option_button'>" + localized_strings[language].thewordoptions + " ▾</div>");
+		
+		$("#es_dlc_option_button").on("click", function() {
+			$("#es_dlc_option_panel").toggle();
+			if ($("#es_dlc_option_button").text().match("▾")) {
+				$("#es_dlc_option_button").text(localized_strings[language].thewordoptions + " ▴");
+			} else {
+				$("#es_dlc_option_button").text(localized_strings[language].thewordoptions + " ▾");
+			}
+		});
+
 		$(document).on( "change", ".es_dlc_selection", add_dlc_to_list );
 	}
 
@@ -1831,9 +1873,8 @@ function main($) {
 		var addfunds = $(".addfunds_area_purchase_game:first").clone();
 		$(addfunds).addClass("es_custom_funds");
 		$(addfunds).find(".btn_addtocart_content").addClass("es_custom_button");
-		$(addfunds).find("h1").text("Add custom amount");
-		//$(addfunds).find("p").text(localized_strings[language].wallet.custom_amount_text.replace("__minamount__", $(addfunds).find(".price").text().trim()));
-		$(addfunds).find("p").text("Add any amount over the minimum");
+		$(addfunds).find("h1").text(localized_strings[language].wallet.custom_amount);
+		$(addfunds).find("p").text(localized_strings[language].wallet.custom_amount_text.replace("__minamount__", $(addfunds).find(".price").text().trim()));
 		var currency_symbol = $(addfunds).find(".price").text().trim().match(/(?:R\$|\$|€|£|pуб)/)[0];
 		var minimum = $(addfunds).find(".price").text().trim().replace(/(?:R\$|\$|€|£|pуб)/, "");
 		var formatted_minimum = minimum;
@@ -1859,9 +1900,6 @@ function main($) {
 			}
 
 			var calculated_value = $("#es_custom_funds_amount").val().replace(/-/g, "0").replace(/\D/g, "").replace(/[^A-Za-z0-9]/g, '');		
-			minimum = minimum.replace(/-/g, "0").replace(/\D/g, "").replace(/[^A-Za-z0-9]/g, '');
-			
-			if (calculated_value <= minimum) { $("#es_custom_funds_amount").val(formatted_minimum); calculated_value = minimum; }
 			$("#es_custom_funds_amount").val($("#es_custom_funds_amount").val().replace(/[A-Za-z]/g, ''));
 			$(".es_custom_button").attr("href", "javascript:submitAddFunds( " + calculated_value + " );")
 		});
