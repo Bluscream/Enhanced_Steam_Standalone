@@ -1,0 +1,24 @@
+2014-05-16 alpha
+-----
++ Added localization (language) support
++ Store page game backgrounds now display full size
++ Added ability to show cost of three cards for booster packs in inventory
++ Added the "total drop count" dialog to the user's badges page
++ Added SteamCardExchange links to the user's badges page
++ Added custom background selection dialog on profile edit screen
++ Added support for showing Metacritic user scores to app pages
++ Added support for showing SteamCharts.com data on app pages
++ Added support for PCGamingWiki buttons on app pages
++ Added support for WSGF widescreen info on app pages
++ Added support for HowLongToBeat.com info on app pages
++ Added Steam review aggregated scores to app pages
++ Added a "Popular" tab to the home page
++ Added achievement section to app pages
++ Added market links and price data to badge pages
++ Added sorting and filtering options to badge pages
++ Added total / purchase option to wishlist pages
++ Added a link to a user's wishlist on their profile
++ Added Enhanced Steam menu to header (doesn't work in Steam client)
+: Updated price history function to support the latest features
+: Fixed a bug that caused some pages not to load correctly
+: Fixed a bug with adding custom wallet amount
