@@ -793,6 +793,21 @@ function main($) {
 		});
 	}
 
+	function get_gamecard(t) {
+		if (t && t.match(/(?:id|profiles)\/.+\/gamecards\/(\d+)/)) return RegExp.$1;
+		else return null;
+	}
+
+	function add_cardexchange_links(game) {
+		$(".badge_row").each(function () {
+			var node = this;
+			var gamecard = game || get_gamecard($(node).find(".badge_row_overlay").attr('href'));
+			if(!gamecard) return;
+			$(node).prepend('<div style="position: absolute; z-index: 3; top: 12px; right: 12px;" class="es_steamcardexchange_link"><a href="http://www.steamcardexchange.net/index.php?gamepage-appid-' + gamecard + '" target="_blank" alt="Steam Card Exchange" title="Steam Card Exchange"><img src="http://store.steampowered.com/es-images/ico/steamcardexchange.png" width="24" height="24" border="0" /></a></div>');
+			$(node).find(".badge_title_row").css("padding-right", "44px");
+		});
+	}
+
 	function inventory_market_prepare() {
 		$("#es_market_helper").remove();
 		var es_market_helper = document.createElement("script");
@@ -1258,6 +1273,7 @@ function main($) {
 
 						case /^\/(?:id|profiles)\/.+\/badges/.test(window.location.pathname):
 							add_total_drops_count();
+							add_cardexchange_links();
 							break;
 
 						case /^\/(?:id|profiles)\/.+/.test(window.location.pathname):
