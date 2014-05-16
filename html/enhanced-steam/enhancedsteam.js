@@ -57,6 +57,13 @@ function main($) {
 		return deferred.promise();
 	})();
 
+	function runInPageContext(document_script){
+		var script = document.createElement('script');
+		script.textContent = '(' + document_script + ')();';
+		document.documentElement.appendChild(script);
+		script.parentNode.removeChild(script);
+	}
+
 	// Session storage functions.
 	function setValue(key, value) {
 		window.sessionStorage.setItem(key, JSON.stringify(value));
@@ -1102,6 +1109,98 @@ function main($) {
 		});
 	}
 
+	function add_badge_sort() {
+		if ($(".profile_badges_sortoptions").find("a[href$='sort=r']").length > 0) {
+			$(".profile_badges_sortoptions").find("a[href$='sort=r']").after("&nbsp;&nbsp;<a class='badge_sort_option whiteLink' id='es_badge_sort_drops'>" + localized_strings[language].most_drops + "</a>&nbsp;&nbsp;<a class='badge_sort_option whiteLink' id='es_badge_sort_value'>" + localized_strings[language].drops_value + "</a>");
+		}
+
+		var resetLazyLoader = function() { runInPageContext(function() { 
+				// Clear registered image lazy loader watchers (CScrollOffsetWatcher is found in shared_global.js)
+				CScrollOffsetWatcher.sm_rgWatchers = [];
+				
+				// Recreate registered image lazy loader watchers
+				$J('div[id^=image_group_scroll_badge_images_gamebadge_]').each(function(i,e){
+					// LoadImageGroupOnScroll is found in shared_global.js
+					LoadImageGroupOnScroll(e.id, e.id.substr(19));
+				});
+			});
+		};
+
+		$("#es_badge_sort_drops").on("click", function() {
+			var badgeRows = [];
+			$('.badge_row').each(function () {
+				var push = new Array();
+				if ($(this).html().match(/progress_info_bold".+\d/)) {
+					push[0] = this.outerHTML;
+					push[1] = $(this).find(".progress_info_bold").html().match(/\d+/)[0];
+				} else {
+					push[0] = this.outerHTML;
+					push[1] = "0";
+				}
+				badgeRows.push(push);
+				this.parentNode.removeChild(this);
+			});
+
+			badgeRows.sort(function(a,b) {
+				var dropsA = parseInt(a[1],10);
+				var dropsB = parseInt(b[1],10);
+
+				if (dropsA < dropsB) {
+					return 1;
+				} else {
+					return -1;
+				}	
+			});
+
+			$('.badge_row').each(function () { $(this).css("display", "none"); });
+
+			$(badgeRows).each(function() {
+				$(".badges_sheet:first").append(this[0]);
+			});
+
+			$(".active").removeClass("active");
+			$(this).addClass("active");
+			resetLazyLoader();
+		});
+
+		$("#es_badge_sort_value").on("click", function() {
+			var badgeRows = [];
+			$('.badge_row').each(function () {
+				var push = new Array();
+				if ($(this).find(".es_card_drop_worth").length > 0) {
+					push[0] = this.outerHTML;
+					push[1] = $(this).find(".es_card_drop_worth").html();
+				} else {
+					push[0] = this.outerHTML;
+					push[1] = localized_strings[language].drops_worth_avg;
+				}
+				badgeRows.push(push);
+				$(this).remove();
+			});
+
+			badgeRows.sort(function(a, b) {
+				var worthA = a[1];
+				var worthB = b[1];
+
+				if (worthA < worthB) {
+					return 1;
+				} else {
+					return -1;
+				}
+			});
+
+			$('.badge_row').each(function () { $(this).css("display", "none"); });
+
+			$(badgeRows).each(function() {
+				$(".badges_sheet:first").append(this[0]);
+			});
+
+			$(".active").removeClass("active");
+			$(this).addClass("active");
+			resetLazyLoader();
+		});	
+	}
+
 	function add_gamecard_market_links(game) {
 		var foil;
 		var url_search = window.location.search;
@@ -1795,6 +1894,7 @@ function main($) {
 							add_badge_completion_cost();
 							add_total_drops_count();
 							add_cardexchange_links();
+							add_badge_sort();
 							break;
 
 						case /^\/(?:id|profiles)\/.+\/gamecard/.test(window.location.pathname):
