@@ -1184,6 +1184,58 @@ function main($) {
 		});
 	}
 
+	function add_es_background_selection() {
+		if (window.location.pathname.indexOf("/settings") < 0) {
+			var steam64 = $(document.body).html();
+			steam64 = steam64.match(/g_steamID = \"(.+)\";/)[1];
+			var html = "<form id='es_profile_bg' method='POST' action='http://www.enhancedsteam.com/gamedata/profile_bg_save.php'><div class='group_content group_summary'>";
+			html += "<input type='hidden' name='steam64' value='" + steam64 + "'>";
+			html += "<div class='formRow'><div class='formRowFields'><div class='profile_background_current'><div class='profile_background_current_img_ctn'><div class='es_loading'><img src='http://cdn.steamcommunity.com/public/images/login/throbber.gif'><span>"+ localized_strings[language].loading +"</div>";
+			html += "<img id='es_profile_background_current_image' src=''>";
+			html += "</div><div class='profile_background_current_description'><div id='es_profile_background_current_name'>";
+			html += "</div></div><div style='clear: left;'></div><div class='background_selector_launch_area'></div></div><div class='background_selector_launch_area'>&nbsp;<div style='float: right;'><span id='es_background_save_btn' class='btn_grey_white_innerfade btn_small btn_disabled'><span>" + localized_strings[language].save + "</span></span></div></div><div class='formRowTitle'>" + localized_strings[language].custom_background + ":<span class='formRowHint' title='" + localized_strings[language].custom_background_help + "'>(?)</span></div></div></div>";
+			html += "</form>";
+			$(".group_content_bodytext").before(html);
+
+			get_http("http://api.enhancedsteam.com/profile-select/?steam64=" + steam64, function (txt) {
+				var data = JSON.parse(txt);
+				var select_html = "<select name='es_background' id='es_background' class='gray_bevel dynInput' onchange=\"function image(obj){index=obj.selectedIndex; document.getElementById('es_profile_background_current_image').src=obj.options[index].id; } image(this);\"><option value='0' id='http://www.enhancedsteam.com/gamedata/icons/smallblacksquare.jpg'>None Selected / No Change</option>";
+
+				var array = [];
+				for (var key in data["backgrounds"]) {
+					if (data["backgrounds"].hasOwnProperty(key)) {
+					  array.push(data["backgrounds"][key]);
+					}
+				}
+
+				array.sort(function(a,b) {
+					if ( a.text == b.text ) return 0;
+					return a.text < b.text ? -1 : 1;
+				});
+
+				$.each(array, function(index, value) {
+					if (value["selected"]) {
+						select_html += "<option id='" + escapeHTML(value['id'].toString()) + "' value='" + escapeHTML(value['index'].toString()) + "' SELECTED>" + escapeHTML(value['text'].toString()) + "</option>";
+					} else {
+						select_html += "<option id='" + escapeHTML(value['id'].toString()) + "' value='" + escapeHTML(value['index'].toString()) + "'>" + escapeHTML(value['text'].toString()) + "</option>";
+					}
+				});
+
+				select_html += "</select>";
+				$(".es_loading").remove();
+				$("#es_background_save_btn").removeClass("btn_disabled");
+				$("#es_background_save_btn").click(function(e) {
+					$("#es_profile_bg").submit();
+				});
+				$("#es_profile_background_current_name").html(select_html);
+
+				get_http("http://api.enhancedsteam.com/profile-small/?steam64=" + steam64, function (txt) {
+					$("#es_profile_background_current_image").attr("src", escapeHTML(txt));
+				});
+			});
+		}
+	}
+
 	$(document).ready(function(){
 		is_signed_in();
 		localization_promise.done(function(){
@@ -1253,6 +1305,10 @@ function main($) {
 						case /^\/(?:id|profiles)\/.+\/\b(home|myactivity|status)\b/.test(window.location.pathname):
 							start_friend_activity_highlights();
 							bind_ajax_content_highlighting();
+							break;
+
+						case /^\/(?:id|profiles)\/.+\/edit/.test(window.location.pathname):
+							add_es_background_selection();
 							break;
 
 						case /^\/(?:id|profiles)\/.+\/inventory/.test(window.location.pathname):
