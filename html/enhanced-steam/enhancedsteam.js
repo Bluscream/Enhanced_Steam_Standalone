@@ -465,6 +465,49 @@ function main($) {
 		}
 	}
 
+	// Add Steam user review score
+	function add_steamreview_userscore(appid) {
+		if ($(".game_area_dlc_bubble").length == 0) {
+			var positive = 0;
+			var negative = 0;
+			$(".game_details").find(".details_block:first").before("<div id='es_review_score'><img src='http://cdn.steamcommunity.com/public/images/login/throbber.gif'><span>" + localized_strings[language].loading + "</span></div>");
+
+			get_http("http://steamcommunity.com/app/" + appid + "/homecontent/?userreviewsoffset=0&p=1&itemspage=10&appHubSubSection=10&browsefilter=toprated", function(p1) {
+				$(p1).find(".thumb").each(function() {
+					if ($(this).html().match(/icon_thumbsUp/)) { positive += 1; } else { negative += 1; }
+				});
+				get_http("http://steamcommunity.com/app/" + appid + "/homecontent/?userreviewsoffset=10&p=2&itemspage=10&appHubSubSection=10&browsefilter=toprated", function(p2) {
+					$(p2).find(".thumb").each(function() {
+						if ($(this).html().match(/icon_thumbsUp/)) { positive += 1; } else { negative += 1; }
+					});
+					get_http("http://steamcommunity.com/app/" + appid + "/homecontent/?userreviewsoffset=20&p=3&itemspage=10&appHubSubSection=10&browsefilter=toprated", function(p3) {
+						$(p3).find(".thumb").each(function() {
+							if ($(this).html().match(/icon_thumbsUp/)) { positive += 1; } else { negative += 1; }
+						});
+						get_http("http://steamcommunity.com/app/" + appid + "/homecontent/?userreviewsoffset=30&p=4&itemspage=10&appHubSubSection=10&browsefilter=toprated", function(p4) {
+							$(p4).find(".thumb").each(function() {
+								if ($(this).html().match(/icon_thumbsUp/)) { positive += 1; } else { negative += 1; }
+							});
+							get_http("http://steamcommunity.com/app/" + appid + "/homecontent/?userreviewsoffset=40&p=5&itemspage=10&appHubSubSection=10&browsefilter=toprated", function(p5) {
+								$(p5).find(".thumb").each(function() {
+									if ($(this).html().match(/icon_thumbsUp/)) { positive += 1; } else { negative += 1; }
+								});
+
+								var pos_percent = ((positive / (positive + negative)) * 100).toFixed(0);
+								var neg_percent = ((negative / (positive + negative)) * 100).toFixed(0);
+								if (isNaN(pos_percent) == false && isNaN(neg_percent) == false) {								
+									$("#es_review_score").html('<div style="display: inline-block; margin-right: 25px;"><img src="http://cdn.steamcommunity.com/public/shared/images/userreviews/icon_thumbsUp.png" width="24" height="24" class="es_review_image"><span class="es_review_text"> ' + pos_percent + '%</span></div><div style="display: inline-block;"><img src="http://cdn.steamcommunity.com/public/shared/images/userreviews/icon_thumbsDown.png" width="24" height="24" class="es_review_image"><span class="es_review_text"> ' + neg_percent + '%</span></div><div style="clear: both;"></div>');
+								} else {
+									$("#es_review_score").remove();
+								}
+							});
+						});
+					});
+				});
+			});
+		}
+	}
+
 	function add_pcgamingwiki_link(appid) {
 		get_http("http://api.enhancedsteam.com/pcgw/?appid=" + appid, function (txt) {
 			if (txt.length > 0) {
@@ -545,6 +588,11 @@ function main($) {
 				window.location.replace(window.location.href.replace(/[?&]cc=.{2}/, ""));
 			})
 		}
+	}
+
+	// Remove the "Install Steam" button at the top of each page
+	function remove_install_steam_button() {
+		$('div.header_installsteam_btn').replaceWith('');
 	}
 
 	function show_pricing_history(appid, type) {
@@ -1617,6 +1665,7 @@ function main($) {
 
 			add_enhanced_steam_options();
 			add_fake_country_code_warning();
+			remove_install_steam_button();
 			add_overlay();
 
 			switch (window.location.host) {
@@ -1634,6 +1683,7 @@ function main($) {
 							
 							drm_warnings();
 							add_metacritic_userscore();
+							add_steamreview_userscore(appid);
 
 							add_pcgamingwiki_link(appid);
 							add_app_page_highlights(appid);
