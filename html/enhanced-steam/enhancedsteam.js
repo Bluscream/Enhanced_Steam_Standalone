@@ -1154,6 +1154,55 @@ function main($) {
 		});
 	}
 
+	function add_badge_filter() {
+		if ( $(".profile_small_header_texture a")[0].href == window.location.origin + window.location.pathname.replace("/badges/", "")) {
+			var html  = "<div style='text-align: right;'><span>" + localized_strings[language].show + ": </span>";
+				html += "<label class='badge_sort_option whiteLink es_badges' id='es_badge_all'><input type='radio' name='es_badge_sort' checked><span>" + localized_strings[language].badges_all + "</span></label>";
+				html += "<label class='badge_sort_option whiteLink es_badges' id='es_badge_drops'><input type='radio' name='es_badge_sort'><span>" + localized_strings[language].badges_drops + "</span></label>";
+				html += "</div>";
+
+			$('.profile_badges_header').append(html);
+
+			var resetLazyLoader = function() { runInPageContext(function() { 
+					// Clear registered image lazy loader watchers (CScrollOffsetWatcher is found in shared_global.js)
+					CScrollOffsetWatcher.sm_rgWatchers = [];
+					
+					// Recreate registered image lazy loader watchers
+					$J('div[id^=image_group_scroll_badge_images_gamebadge_]').each(function(i,e){
+						// LoadImageGroupOnScroll is found in shared_global.js
+						LoadImageGroupOnScroll(e.id, e.id.substr(19));
+					});
+				});
+			};
+			
+			$('#es_badge_all').on('click', function() {
+				$('.is_link').css('display', 'block');			
+				resetLazyLoader();
+			});
+
+			$('#es_badge_drops').on('click', function() {
+				$('.is_link').each(function () {
+					if (!($(this).html().match(/progress_info_bold".+\d/))) {
+						$(this).css('display', 'none');
+					} else if (parseFloat($(this).html().match(/progress_info_bold".+?(\d+)/)[1]) == 0) {					
+						$(this).css('display', 'none');				
+					} else {
+						if ($(this).html().match(/badge_info_unlocked/)) {
+							if (!($(this).html().match(/badge_current/))) {
+								$(this).css('display', 'none');
+							}
+						}
+						// Hide foil badges too
+						if (!($(this).html().match(/progress_info_bold/))) {
+							$(this).css('display', 'none');
+						}
+					}
+				});
+				resetLazyLoader();
+			});
+		}
+	}
+
 	function add_badge_sort() {
 		if ($(".profile_badges_sortoptions").find("a[href$='sort=r']").length > 0) {
 			$(".profile_badges_sortoptions").find("a[href$='sort=r']").after("&nbsp;&nbsp;<a class='badge_sort_option whiteLink' id='es_badge_sort_drops'>" + localized_strings[language].most_drops + "</a>&nbsp;&nbsp;<a class='badge_sort_option whiteLink' id='es_badge_sort_value'>" + localized_strings[language].drops_value + "</a>");
@@ -1940,6 +1989,7 @@ function main($) {
 							add_badge_completion_cost();
 							add_total_drops_count();
 							add_cardexchange_links();
+							add_badge_filter();
 							add_badge_sort();
 							break;
 
