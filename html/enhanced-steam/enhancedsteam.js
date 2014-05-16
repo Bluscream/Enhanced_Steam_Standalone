@@ -390,6 +390,18 @@ function main($) {
 		}
 	}
 
+	function add_metacritic_userscore() {
+		var meta = $("#game_area_metalink").find("a").attr("href");
+		meta = meta.replace("steam://openurl/", "");
+		if (meta) {
+			get_http("http://api.enhancedsteam.com/metacritic/?mcurl=" + meta, function (txt) {
+				var metauserscore = txt*10;
+				var newmeta = '<div id="game_area_metascore" style="background-image: url( http://store.steampowered.com/es-images/metacritic_bg.png );"><div id="metapage">' + metauserscore + '</div></div>';
+				$("#game_area_metascore").after(newmeta);
+			});
+		}
+	}
+
 	function send_age_verification() {
 		document.getElementsByName("ageYear")[0].value="1955";
 		document.getElementsByClassName("btn_checkout_green")[0].click();
@@ -1256,7 +1268,9 @@ function main($) {
 							show_pricing_history(appid, "app");
 							dlc_data_from_site(appid);
 							enhance_game_background();
+							
 							drm_warnings();
+							add_metacritic_userscore();
 							add_steamdb_links(appid, "app");
 							add_dlc_checkboxes();
 							break;
