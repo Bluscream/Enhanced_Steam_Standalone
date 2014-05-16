@@ -402,8 +402,8 @@ function main($) {
 
 	function add_metacritic_userscore() {
 		var meta = $("#game_area_metalink").find("a").attr("href");
-		meta = meta.replace("steam://openurl/", "");
 		if (meta) {
+			meta = meta.replace("steam://openurl/", "");
 			get_http("http://api.enhancedsteam.com/metacritic/?mcurl=" + meta, function (txt) {
 				var metauserscore = txt*10;
 				var newmeta = '<div id="game_area_metascore" style="background-image: url( http://store.steampowered.com/es-images/metacritic_bg.png );"><div id="metapage">' + metauserscore + '</div></div>';
