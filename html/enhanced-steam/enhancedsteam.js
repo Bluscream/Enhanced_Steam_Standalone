@@ -875,6 +875,106 @@ function main($) {
 		});
 	}
 
+	function add_gamecard_market_links(game) {
+		var foil;
+		var url_search = window.location.search;
+		var url_parameters_array = url_search.replace("?","").split("&");
+		var cost = 0;
+
+		$.each(url_parameters_array,function(index,url_parameter){
+			if(url_parameter=="border=1"){
+				foil=true;
+			}
+		});
+
+		get_http("http://store.steampowered.com/app/220/", function(txt) {
+			var currency_symbol = $(txt).find(".price, .discount_final_price").text().trim().match(/(?:R\$|\$|€|£|pуб)/)[0];
+			var currency_type = currency_symbol_to_type(currency_symbol);
+
+			get_http("http://api.enhancedsteam.com/market_data/card_prices/?appid=" + game, function(txt) {
+				var data = JSON.parse(txt);
+				$(".badge_card_set_card").each(function() {
+					var node = $(this);
+					var cardname = $(this).html().match(/(.+)<div style=\"/)[1].trim();			
+					if (cardname == "") { cardname = $(this).html().match(/<div class=\"badge_card_set_text\">(.+)<\/div>/)[1].trim(); }
+
+					var newcardname = cardname;
+					if (foil) { newcardname += " (Foil)"; }
+
+					for (var i = 0; i < data.length; i++) {
+						if (data[i].name == newcardname) {
+							var marketlink = "http://steamcommunity.com/market/listings/" + data[i].url;
+							switch (currency_symbol) {
+								case "R$":
+									var card_price = formatCurrency(data[i].price_brl, currency_type);
+									if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_brl);
+									break;
+								case "€":
+									var card_price = formatCurrency(data[i].price_eur, currency_type); 
+									if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_eur);
+									break;
+								case "pуб":
+									var card_price = formatCurrency(data[i].price_rub, currency_type); 
+									if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_rub);
+									break;
+								case "£":
+									var card_price = formatCurrency(data[i].price_gbp, currency_type);
+									if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_gbp);
+									break;
+								default:
+									var card_price = formatCurrency(data[i].price, currency_type);
+									if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price);
+									break;
+							}
+						}
+					}
+
+					if (!(marketlink)) { 
+						if (foil) { newcardname = newcardname.replace("(Foil)", "(Foil Trading Card)"); } else { newcardname += " (Trading Card)"; }
+						for (var i = 0; i < data.length; i++) {
+							if (data[i].name == newcardname) {
+								var marketlink = "http://steamcommunity.com/market/listings/" + data[i].url;
+								switch (currency_symbol) {
+									case "R$":
+										var card_price = formatCurrency(data[i].price_brl, currency_type);
+										if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_brl);
+										break;
+									case "€":
+										var card_price = formatCurrency(data[i].price_eur, currency_type); 
+										if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_eur);
+										break;
+									case "pуб":
+										var card_price = formatCurrency(data[i].price_rub, currency_type); 
+										if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_rub);
+										break;
+									case "£":
+										var card_price = formatCurrency(data[i].price_gbp, currency_type); 
+										if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price_gbp);
+										break;
+									default:
+										var card_price = formatCurrency(data[i].price, currency_type);						
+										if ($(node).hasClass("unowned")) cost += parseFloat(data[i].price);
+										break;
+								}
+							}
+						}
+					}
+
+					if (marketlink && card_price) {
+						var html = "<a class=\"es_card_search\" href=\"" + marketlink + "\">" + localized_strings[language].lowest_price + ": " + card_price + "</a>";
+						$(this).children("div:contains('" + cardname + "')").parent().append(html);
+					}
+				});
+				if (cost > 0  && $(".profile_small_header_name .whiteLink").attr("href") == window.location.origin + window.location.pathname.replace("/gamecards/" + game + "/", "")) {
+					cost = formatCurrency(cost, currency_type);
+					$(".badge_empty_name:last").after("<div class='badge_info_unlocked' style='color: #5c5c5c;'>" + localized_strings[language].badge_completion_cost+ ": " + cost + "</div>");
+					$(".badge_empty_right").css("margin-top", "7px");
+					$(".gamecard_badge_progress .badge_info").css("width", "296px");
+				}
+			});
+		});
+	}
+
 	function inventory_market_prepare() {
 		$("#es_market_helper").remove();
 		var es_market_helper = document.createElement("script");
@@ -1454,6 +1554,12 @@ function main($) {
 						case /^\/(?:id|profiles)\/.+\/badges/.test(window.location.pathname):
 							add_total_drops_count();
 							add_cardexchange_links();
+							break;
+
+						case /^\/(?:id|profiles)\/.+\/gamecard/.test(window.location.pathname):
+							var gamecard = get_gamecard(window.location.pathname);
+							add_cardexchange_links(gamecard);
+							add_gamecard_market_links(gamecard);							
 							break;
 
 						case /^\/(?:id|profiles)\/.+/.test(window.location.pathname):
