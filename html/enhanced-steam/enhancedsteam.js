@@ -549,6 +549,16 @@ function main($) {
 		}
 	}
 
+	function enhance_game_background(type) {
+		if (type == "sale") {
+			$("#game_background").css("background-size", "initial");
+		} else {
+			$("#game_background").before("<div id='es_background_gradient'></div>");
+		}
+
+		$("#game_background").css("display", "block");
+	}
+
 	// Add SteamDB links to pages
 	function add_steamdb_links(appid, type) {
 		switch (type) {
@@ -1152,6 +1162,7 @@ function main($) {
 							var appid = get_appid(window.location.host + window.location.pathname);
 							show_pricing_history(appid, "app");
 							dlc_data_from_site(appid);
+							enhance_game_background();
 							drm_warnings();
 							add_steamdb_links(appid, "app");
 							add_dlc_checkboxes();
@@ -1159,6 +1170,7 @@ function main($) {
 
 						case /^\/sub\/.*/.test(window.location.pathname):
 							var subid = get_subid(window.location.host + window.location.pathname);
+							enhance_game_background();
 							drm_warnings();
 							show_pricing_history(subid, "sub");
 							add_steamdb_links(subid, "sub");
@@ -1170,6 +1182,10 @@ function main($) {
 
 						case /^\/steamaccount\/addfunds/.test(window.location.pathname):
 							add_custom_wallet_amount();
+							break;
+
+						case /^\/sale\/.*/.test(window.location.pathname):
+							enhance_game_background("sale");
 							break;
 
 						case /^\/$/.test(window.location.pathname):
