@@ -402,6 +402,17 @@ function main($) {
 		}
 	}
 
+	function add_pcgamingwiki_link(appid) {
+		get_http("http://api.enhancedsteam.com/pcgw/?appid=" + appid, function (txt) {
+			if (txt.length > 0) {
+				var gamename = txt.match(/results":{"(.+)":{/)[1];
+				var data = JSON.parse(txt);
+				var url = (data["results"][gamename]["fullurl"]);
+				$('#demo_block').find('.block_content_inner').prepend('<div class="demo_area_button"><a class="game_area_wishlist_btn" target="_blank" href="' + url + '" style="background-image:url( http://store.steampowered.com/es-images/pcgw.png );">' + localized_strings[language].wiki_article.replace("__pcgw__","PC Gaming Wiki") + '</a></div>');
+			}
+		});
+	}
+
 	function send_age_verification() {
 		document.getElementsByName("ageYear")[0].value="1955";
 		document.getElementsByClassName("btn_checkout_green")[0].click();
@@ -1290,6 +1301,8 @@ function main($) {
 							
 							drm_warnings();
 							add_metacritic_userscore();
+
+							add_pcgamingwiki_link(appid);
 							add_steamdb_links(appid, "app");
 							add_steamchart_info(appid);
 							add_dlc_checkboxes();
