@@ -198,6 +198,18 @@ function main($) {
 			$node = $(node).find(".large_cap_content");
 		}
 
+		// Sale items
+		if (node.classList.contains("insert_season_here_sale_dailydeal_ctn")) {
+			$node = $(node).find(".dailydeal_footer");
+		}
+
+		// App and community hub page headers
+		if (node.classList.contains("apphub_HeaderTop") || node.classList.contains("apphub_HeaderStandardTop")) {
+			$node = $(node).find(".apphub_AppName");
+			$node.css("color", color);
+			return;
+		}
+
 		// Blotter activity
 		if ($node.parent().parent()[0].classList.contains("blotter_daily_rollup_line") || $node.parent().parent()[0].classList.contains("blotter_author_block") || $node.parent().parent()[0].classList.contains("blotter_gamepurchase") || $node.parent().parent()[0].classList.contains("blotter_recommendation")) {
 			$node.css("color", color);
@@ -893,6 +905,13 @@ function main($) {
 			string = decodeURI(string);
 		}
 		return string;
+	}
+
+	function add_app_page_highlights(appid) {
+		if (window.location.host == "store.steampowered.com") node = $(".apphub_HeaderStandardTop")[0];
+		if (window.location.host == "steamcommunity.com") node = $(".apphub_HeaderTop")[0];
+
+		highlight_app(appid, node);
 	}
 
 	function add_badge_completion_cost() {
@@ -1617,6 +1636,7 @@ function main($) {
 							add_metacritic_userscore();
 
 							add_pcgamingwiki_link(appid);
+							add_app_page_highlights(appid);
 							add_steamdb_links(appid, "app");
 							add_steamchart_info(appid);
 							add_dlc_checkboxes();
