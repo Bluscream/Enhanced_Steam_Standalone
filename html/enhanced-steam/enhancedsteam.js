@@ -213,15 +213,12 @@ function main($) {
 
 	// adds "empty cart" button at checkout
 	function add_empty_cart_button() {
-		if (document.URL.indexOf("store.steampowered.com/cart/") >= 0) {    
-			addtext = "<a href='javascript:document.cookie=\"shoppingCartGID=0; path=/\";window.location.reload();' class='btn_checkout_blue' style='float: left; margin-top: 14px;'><div class='leftcap'></div><div class='rightcap'></div>Empty Cart</a>";
-		
-			var loc = 0;	
-			xpath_each("//div[contains(@class,'checkout_content')]", function (node) {		
-				loc = loc + 1;
-				if (loc == 2) { node.insertAdjacentHTML('afterbegin', addtext); }
-			});
-		} 
+		addtext = "<a id='es_empty_cart' class='btn_checkout_blue' style='float: left; margin-top: 14px;'><div class='leftcap'></div><div class='rightcap'></div>" + escapeHTML(localized_strings[language].empty_cart) + "</a>";
+		$(".checkout_content").prepend(addtext);
+		$("#es_empty_cart").on("click", function() {
+			document.cookie = 'shoppingCartGID' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+			location.href=location.href;
+		});
 	}
 
 	// User profile pages
