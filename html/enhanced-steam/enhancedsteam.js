@@ -1373,18 +1373,25 @@ function main($) {
 
 	function start_highlights_and_tags(){
 		var selectors = [
-				"div.tab_row",			// Storefront rows
-				"div.dailydeal",		// Christmas deals; https://www.youtube.com/watch?feature=player_detailpage&v=2gGopKNPqVk#t=52s
-				"div.wishlistRow",		// Wishlist row
-				"a.game_area_dlc_row",	// DLC on app pages
-				"a.small_cap",			// Featured storefront items, and "recommended" section on app pages.
-				"a.search_result_row",	// Search result row.
-				"a.match",				// Search suggestions row.
-				"a.cluster_capsule",	// Carousel items.
-				"div.recommendation_highlight",	// Recommendation page.
-				"div.recommendation_carousel_item",	// Recommendation page.
-				"div.friendplaytime_game"	// Recommendation page.
-			];
+			"div.tab_row",				// Storefront rows
+			"div.dailydeal",			// Christmas deals; http://youtu.be/2gGopKNPqVk?t=52s
+			"div.wishlistRow",			// Wishlist rows
+			"a.game_area_dlc_row",			// DLC on app pages
+			"a.small_cap",				// Featured storefront items and "recommended" section on app pages
+			"a.search_result_row",			// Search result rows
+			"a.match",				// Search suggestions rows
+			"a.cluster_capsule",			// Carousel items
+			"div.recommendation_highlight",		// Recommendation pages
+			"div.recommendation_carousel_item",	// Recommendation pages
+			"div.friendplaytime_game",		// Recommendation pages
+			"div.dlc_page_purchase_dlc",		// DLC page rows
+			"div.sale_page_purchase_item",		// Sale pages
+			"div.item",				// Sale pages / featured pages
+			"div.home_area_spotlight",		// Midweek and weekend deals
+			"div.insert_season_here_sale_dailydeal_ctn",
+			"div.browse_tag_game",			// Tagged games
+			"div.similar_grid_item"			// Items on the "Similarly tagged" pages
+		];
 
 		// Get all appids and nodes from selectors.
 		$.each(selectors, function (i, selector) {
