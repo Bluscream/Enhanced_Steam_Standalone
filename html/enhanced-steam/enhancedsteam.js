@@ -762,6 +762,37 @@ function main($) {
 		return string;
 	}
 
+	function add_total_drops_count() {
+		var drops_count = 0;
+		var drops_games = 0;
+		var booster_games = 0;
+		$(".progress_info_bold").each(function(i, obj) {
+			var parent = ($(obj).parent().parent().html().trim());
+			if (!(parent.match(/^<div class="badge_title_stats">/))) {
+				return false;
+			}
+
+			var obj_count = obj.innerHTML.match(/\d+/);
+			if (obj_count) {
+				drops_count += parseInt(obj_count[0]);
+				drops_games = drops_games + 1;
+			}
+		});
+
+		get_http("http://steamcommunity.com/my/ajaxgetboostereligibility/", function(txt) {
+			var eligible = $.parseHTML(txt);
+			$(eligible).find(".booster_eligibility_games").children().each(function(i, obj) {
+				booster_games += 1;
+			});
+
+			$(".profile_xp_block_right").html("<span style='color: #fff;'>" + localized_strings[language].card_drops_remaining.replace("__drops__", drops_count) + "<br>" + localized_strings[language].games_with_drops.replace("__dropsgames__", drops_games) + "<br>" + localized_strings[language].games_with_booster.replace("__boostergames__", booster_games) + "</span>");
+			if ($(".badge_details_set_favorite").find(".btn_grey_black").length > 0) { $(".badge_details_set_favorite").append("<div class='btn_grey_black btn_small_thin' id='es_faq_link'><span>" + localized_strings[language].faqs + "</span></div>"); }
+			$("#es_faq_link").click(function() {
+				window.location = "http://steamcommunity.com/tradingcards/faq";
+			});
+		});
+	}
+
 	function inventory_market_prepare() {
 		$("#es_market_helper").remove();
 		var es_market_helper = document.createElement("script");
@@ -1223,6 +1254,10 @@ function main($) {
 						case /^\/(?:id|profiles)\/.+\/inventory/.test(window.location.pathname):
 							bind_ajax_content_highlighting();
 							inventory_market_prepare();
+							break;
+
+						case /^\/(?:id|profiles)\/.+\/badges/.test(window.location.pathname):
+							add_total_drops_count();
 							break;
 
 						case /^\/(?:id|profiles)\/.+/.test(window.location.pathname):
