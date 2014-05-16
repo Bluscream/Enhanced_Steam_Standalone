@@ -864,8 +864,8 @@ function main($) {
 		}
 	}
 
-	// Adds red warnings for 3rd party DRM
-	function drm_warnings() {
+	// Add red warnings for 3rd party DRMs
+	function drm_warnings(type) {
 		var gfwl;
 		var uplay;
 		var securom;
@@ -919,51 +919,46 @@ function main($) {
 		if (text.indexOf("3rd-party DRM") > 0) { otherdrm = true; }
 		if (text.indexOf("No 3rd Party DRM") > 0) { otherdrm = false; }
 		
+		var string_type;
+		if (type == "app") { string_type = localized_strings[language].drm_third_party; } else { string_type = localized_strings[language].drm_third_party_sub; }
+		
 		if (gfwl) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM (Games for Windows Live)</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + ' (Games for Windows Live)</div>');
 			otherdrm = false;
 		}
-		
+
 		if (uplay) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM (Ubisoft Uplay)</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + ' (Ubisoft Uplay)</div>');
 			otherdrm = false;
 		}
-		
+
 		if (securom) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM (SecuROM)</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + ' (SecuROM)</div>');
 			otherdrm = false;
 		}
-		
+
 		if (tages) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM (Tages)</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + ' (Tages)</div>');
 			otherdrm = false;
 		}
-		
+
 		if (stardock) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM (Stardock Account Required)</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + ' (Stardock Account Required)</div>');
 			otherdrm = false;
 		}
-		
+
 		if (rockstar) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM (Rockstar Social Club)</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + ' (Rockstar Social Club)</div>');
 			otherdrm = false;
 		}
-		
+
 		if (kalypso) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM (Kalypso Launcher)</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + ' (Kalypso Launcher)</div>');
 			otherdrm = false;
 		}
-		
+
 		if (otherdrm) {
-			var drm = document.getElementById('game_area_purchase'); 
-			drm.insertAdjacentHTML('beforebegin', '<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">Warning: This title uses 3rd party DRM</div>');
+			$("#game_area_purchase").before('<div class="game_area_already_owned" style="background-image: url( http://store.steampowered.com/es-images/game_area_warning.png );">' + string_type + '</div>');
 		}
 	}
 
@@ -1916,7 +1911,7 @@ function main($) {
 							dlc_data_from_site(appid);
 							enhance_game_background();
 							
-							drm_warnings();
+							drm_warnings("app");
 							add_metacritic_userscore();
 							add_steamreview_userscore(appid);
 
@@ -1931,7 +1926,7 @@ function main($) {
 						case /^\/sub\/.*/.test(window.location.pathname):
 							var subid = get_subid(window.location.host + window.location.pathname);
 							enhance_game_background();
-							drm_warnings();
+							drm_warnings("sub");
 							show_pricing_history(subid, "sub");
 							add_steamdb_links(subid, "sub");
 							break;
