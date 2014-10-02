@@ -43,7 +43,7 @@ rinetd yourself.
 1. Clone this repository.
 
 2. If nginx and rinetd aren't installed already,
-   so. On Debian based systems (Debian, Ubuntu,
+   do so. On Debian based systems (Debian, Ubuntu,
    Linux Mint etc.) open a terminal and use this command:
 
        sudo apt-get install nginx rinetd
