@@ -1,9 +1,15 @@
-**/!\ DO NOT INSTALL ANY VERSION OF ENHANCED STEAM STANDALONE FROM UNKNOWN SOURCES /!\**
-
 Enhanced Steam Standalone
 =============
 
 Enhanced Steam Standalone, a standalone version of the [Enhanced Steam](https://github.com/jshackles/Enhanced_Steam) plugin for various browsers (Chrome*, Firefox, Opera), that works with any html-css-and-js-aware http client (including the Steam client).
+
+This repository
+---------------
+
+This repository is a fork of the main github repository,
+which is located [here](https://github.com/jshackles/Enhanced_Steam_Standalone).
+
+The fork was made to attempt to add Linux support.
 
 Running on Windows
 ------------
