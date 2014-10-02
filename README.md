@@ -5,7 +5,7 @@ Enhanced Steam Standalone
 
 Enhanced Steam Standalone, a standalone version of the [Enhanced Steam](https://github.com/jshackles/Enhanced_Steam) plugin for various browsers (Chrome*, Firefox, Opera), that works with any html-css-and-js-aware http client (including the Steam client).
 
-Installation
+Running on Windows
 ------------
 
 For now, the installation requires several steps, with a lot of manual work:
@@ -22,6 +22,46 @@ OR
 4. Browse Steam with new features.
 
 _Note: If you modify the local IP addresses in the hosts file, please modify them in the rinetd\rinetd.conf file also._
+
+
+Running on Linux
+------------
+
+These instructions have been tested on Ubuntu 14.04,
+but the script (stop-start.sh) should work on any Unix
+based system, including Mac OSX.
+On systems that don't use apt-get for installation
+you'll have to work out the installation of nginx and
+rinetd yourself.
+
+1. Clone this repository.
+
+2. If nginx and rinetd aren't installed already,
+   so. On Debian based systems (Debian, Ubuntu,
+   Linux Mint etc.) open a terminal and use this command:
+
+       sudo apt-get install nginx rinetd
+
+3. In a terminal window cd to the folder that you
+   cloned this repository into.
+   E.g, assuming you cloned it into your home
+   directory:
+       cd ~/Enhanced_Steam_Standalone
+
+   Now type:
+       chmod +x start-stop.sh
+
+   And press Enter
+
+4. Finally type
+       sudo ./start-stop.sh
+
+   to start Enhanced Steam working.
+   Note that sudo is required, because the script
+   edits you /etc/hosts file. The next time you run it
+   it will put back the way it was.
+
+5. To stop Enhanced Steam again, re-run the shell script.
 
 Principle
 ---------
@@ -57,7 +97,7 @@ Todo
 - The TCP proxy uses IP addresses for the redirection. It would be better to use domains instead (eg. store.steampowered.com and steamcommunity.com)
 - Improve the content of the error page, with better "is online" testing; and why not with js.
 - Better launch application
- 
+
 Credit
 ------
 
