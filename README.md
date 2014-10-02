@@ -34,7 +34,7 @@ Running on Linux
 ------------
 
 These instructions have been tested on Ubuntu 14.04,
-but the script (stop-start.sh) should work on any Unix
+but the script (stop-start-bash.sh) should work on any Unix
 based system, including Mac OSX.
 On systems that don't use apt-get for installation
 you'll have to work out the installation of nginx and
@@ -55,12 +55,12 @@ rinetd yourself.
        cd ~/Enhanced_Steam_Standalone
 
    Now type:
-       chmod +x start-stop.sh
+       chmod +x start-stop-bash.sh
 
    And press Enter
 
 4. Finally type
-       sudo ./start-stop.sh
+       sudo ./start-stop-bash.sh
 
    to start Enhanced Steam working.
    Note that sudo is required, because the script
