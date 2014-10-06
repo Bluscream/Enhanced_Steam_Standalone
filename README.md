@@ -1,3 +1,5 @@
+**/!\ DO NOT INSTALL ANY VERSION OF ENHANCED STEAM STANDALONE FROM UNKNOWN SOURCES /!\**
+
 Enhanced Steam Standalone
 =============
 
