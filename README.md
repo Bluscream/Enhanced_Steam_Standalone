@@ -48,25 +48,25 @@ rinetd yourself.
    do so. On Debian based systems (Debian, Ubuntu,
    Linux Mint etc.) open a terminal and use this command:
 
-       sudo apt-get install nginx rinetd
+       `sudo apt-get install nginx rinetd`
 
 3. In a terminal window cd to the folder that you
    cloned this repository into.
    E.g, assuming you cloned it into your home
    directory:
-       cd ~/Enhanced_Steam_Standalone
+       `cd ~/Enhanced_Steam_Standalone`
 
    Now type:
-       chmod +x start-stop-bash.sh
+       `chmod +x start-stop-bash.sh`
 
    And press Enter
 
 4. Finally type
-       sudo ./start-stop-bash.sh
+       `sudo ./start-stop-bash.sh`
 
    to start Enhanced Steam working.
    Note that sudo is required, because the script
-   edits you /etc/hosts file. The next time you run it
+   edits you `/etc/hosts` file. The next time you run it
    it will put back the way it was.
 
 5. To stop Enhanced Steam again, re-run the shell script.
